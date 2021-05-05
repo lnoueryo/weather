@@ -1,0 +1,246 @@
+最初に設定ある程度
+#wrapper{width: 100%; height: 100%; position: relative; background-image: url(); background-size: cover;overflow: hidden;}
+#header-wrapper{width: 100%; position: relative; background-image: url(); background-size: cover; background-color: black;}
+#main-wrapper{width: 100%; position: relative; background-color: transparent; background-size: cover;padding-bottom: 130px;}
+@import url('https://fonts.googleapis.com/css?family=Proxima+Nova');
+body #wrapper{
+    color: white;
+    font-family: proxima-nova,sans-serif;
+    letter-spacing: .1em;
+    line-height: 1.5;
+    background-color: black;
+    word-break: break-all;
+    overflow: hidden;
+}
+
+header {
+    position: relative;
+    /* ドロワーのインデックス */
+    z-index: 4;
+}
+
+main {
+    transform: translate(0, -5px);
+    position: relative;
+    z-index: 2;
+    background-color: black;
+    /* fixedのfooterを見れるようにmargin-bottomで調整 */
+    margin-bottom: 1000px;
+}
+
+footer{
+    position: relative;
+    z-index: 1;
+}
+
+
+/* header */
+#header-wrapper .container1{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    margin-bottom: 5%;
+}
+#header-wrapper .content-container1{
+    padding: 4%;
+}
+#header-right{
+    max-width: 700px;
+    width: 100%;
+    margin-left: auto;
+}
+
+
+/* main */
+#section1 .content-wrapper{
+    width: 100%;
+    position: relative;
+    background-image: url(/mypage/img/03.jpg);
+    background-size:cover;
+    background-position: right 75% bottom 50%;
+    opacity: 0.9;
+}
+.sec-wrapper {
+    background-color: rgba(0, 0, 0, 0.646);
+    padding-bottom: 5%;
+}
+
+#section1 .container1{
+    padding: 50px 6.25vw 0 6.25vw;
+    flex-direction: row-reverse;
+    position: relative;
+}
+
+#section1 .content-container1{
+    padding-left: 4.375vw;
+    padding-right: 7.375vw;
+    max-width: 700px;
+}
+#section1 .content-container2{
+    padding-right: 7.375vw;
+    padding-left: 4.375vw;
+    margin-left: auto;
+    max-width: 700px;
+}
+
+
+#section2 .content-wrapper{
+    width: 100%;
+    position: relative;
+    /* background-image: url(../img/02.jpg); */
+    background-size:cover;
+    background-position: right 75% bottom 50%;
+    opacity: 0.9;
+}
+#section2 .content-wrapper .filter{
+    content: "";
+    display: block;
+    position: absolute;
+    background: inherit;
+    background-image: url(/mypage/img/02.jpg);
+    top: 0;
+    bottom: 0%;
+    right: 0;
+    left: 0;
+  }
+#section2 .content-container2 {
+    max-width: 600px;
+    margin: 0 auto 4% auto;
+  }
+
+#section2 .container1{
+    position: relative;
+    /* background-color: rgba(0, 0, 0, 0.7); */
+    margin: auto;
+    padding: 20px 6.25vw 0 6.25vw;
+}
+
+#section2 .content-container{
+    position: relative;
+    width: 100%;
+}
+
+#section3 .content-wrapper{
+    width: 100%;
+    position: relative;
+    /* background-image: url(../img/14.png); */
+    background-repeat: no-repeat;
+    /* background-size:cover; */
+    /* background-position: right 80% bottom 70%; */
+    opacity: 0.9;
+}
+
+#section3 .container1{
+    margin-bottom: 20px;
+    align-items: center;
+    overflow: hidden;
+}
+
+#section3 .content-container{
+    position: relative;
+    width: 100%;
+    margin: auto;
+}
+
+#section4 .content-wrapper{
+    width:100%;
+    height:100%;
+    position: relative;
+    background-image: url(/mypage/img/01.png);
+    /* background-size:cover;
+    background-position: right 50% bottom 50%; */
+    opacity: 0.9;
+    /* background-color: rgba(0, 0, 0, 0.692); */
+}
+
+#section4 .container1{
+    position: relative;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto 5% auto;
+}
+
+#section4 .content-container{
+    position: relative;
+    max-width: 800px;
+    width: 100%;
+}
+#section5 .content-wrapper{
+    width:100%;
+    height:100%;
+    position: relative;
+    background-image: url(/mypage/img/01.png);
+    /* background-size:cover;
+    background-position: right 50% bottom 50%; */
+    opacity: 0.9;
+    /* background-color: rgba(0, 0, 0, 0.692); */
+}
+
+
+.container2{
+    width: 100%;
+    position: relative;
+    padding-left: 240px;
+}
+
+a{
+	color: #0090d2;
+	text-decoration: none;
+	-webkit-transition: all .3s;
+	transition: all .3s;
+}
+/* a:hover{opacity: .85;} */
+a:hover img{opacity: .85;}
+
+sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+footer .container1{
+    padding: 50px 6.25vw 0 6.25vw;
+    flex-direction: row-reverse;
+    position: relative;
+}
+
+
+
+
+/* 特別なレイアウト */
+header .content-container{
+    width: 100%;
+    max-width: 1250px;
+    margin: auto;
+}
+
+@media screen and (max-width: 768px) {
+    .container{
+        position: relative;
+        padding-left: 0px;
+        width: 100%;
+        padding-right: 0;
+    }
+    #main-wrapper{
+        padding-bottom: 70px;
+    }
+    .container2{
+        width: 100%;
+        position: relative;
+        padding-left: 0px;
+    }
+    #section1 .content-container1{
+        padding-left: 0;
+        padding-right: 0;
+        max-width: 700px;
+    }
+    #section1 .content-container2{
+        padding-right: 0;
+        padding-left: 0;
+        margin-left: auto;
+        max-width: 700px;
+    }
+}

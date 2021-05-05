@@ -1,0 +1,49 @@
+@charset "UTF-8";
+/*===============================================================
+	shiftkey - static - common
+	https://www.shiftkey.jp/
+===============================================================*/
+/* clear
+===============================================================*/
+html, body, div, span, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var,b, i, dl, dt, dd, ol, a, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
+	margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+html, body{height: auto;}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section{
+	display:block;
+}
+*, *::before, *::after { box-sizing: border-box; }
+i, u, abbr, code, pre, address{font-weight: normal; font-style: normal; text-decoration: none;}
+blockquote, q {quotes: none;}
+blockquote:before, blockquote:after,q:before, q:after {content:'';}
+input, select {vertical-align:middle;}
+button:hover img{opacity: .85;}
+button {display: inline-block; text-align: center; text-decoration: none;	outline: none;}
+button::before,button::after {position: absolute;	z-index: -1; display: block;	content: '';}
+button,button::before,button::after {-webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;	-webkit-transition: all .3s;	transition: all .3s;}
+button:hover{cursor: pointer;}
+ul, ol, li{list-style: none;}
+table {border-collapse:collapse; border-spacing:0;}
+img{width: 100%; height: auto;}
+hr {display:block; height:1px; border:0; border-top:1px solid #cccccc; margin:1em 0; padding:0;}
+
+/* reset
+===============================================================*/
+html{
+	width: 100%;
+	font-size: 62.5%;
+}
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", YuGothic, "ヒラギノ角ゴ ProN W3", Hiragino Kaku Gothic ProN, Arial, "メイリオ", Meiryo, sans-serif;
+	width: 100%;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	line-height:1;
+}
+h1, h2, h3, h4, h5, h6{word-break: break-all; font-weight: normal; font-size: 1.4rem; margin: 0;}

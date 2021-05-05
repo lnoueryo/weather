@@ -1,0 +1,60 @@
+.hidden{
+    visibility: hidden;
+    opacity:0;
+    transition: all 2s,transform .5s;
+}
+
+.show{
+    visibility: visible;
+    opacity:1;
+    transition: all 2s,transform .5s;
+}
+
+.container{
+    max-width: 1200px;
+    margin: auto;
+    padding: 30px;
+}
+.card{
+    width: 100%;
+    max-width:300px;
+    overflow: hidden;
+    box-shadow: 1px 1px 2px gray;
+    /* height: 370px; */
+    border-radius: 2px;
+    margin-bottom: 40px;
+}
+
+.card-img{
+    /* background-image: url(../img/japan.jpg);
+    background-position: center; */
+    height: 170px;
+    overflow: hidden;
+}
+.card-img img{
+    object-fit: cover;
+    height: 170px;
+    transform: scale(1.0);
+}
+.card-img img:hover{
+    transform: scale(1.4);
+}
+.card-title{
+    padding: 10px;
+    background-color: #443535;
+    color:rgb(231, 231, 231);
+}
+
+.title-font{
+    font-size: 18px;
+    font-weight:bold
+}
+.sub{
+    max-width: 65px;
+    width:100%;
+    text-align: center;
+}
+.sub-font{
+    font-size: 13px;
+    font-weight:bold;
+}
