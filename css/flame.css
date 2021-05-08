@@ -1,6 +1,6 @@
 /* ここはいじらない */
 
-.none{display: none;}
+.none{display: none!important;}
 .w-100{width: 100%}
 .w-50{width: 50%}
 .w-30{width: 30%}
@@ -132,6 +132,17 @@
 .sp-only{display: none;}
 .sp48-only{display: none;}
 .sp-only-f{display: none;}
+
+.tr{
+    transition: all .5s;
+}
+.tr1{
+    transition: all 1s;
+}
+.tr2{
+    transition: all 2s;
+}
+
 @media screen and (max-width: 768px) {
     .pc-only{display: none;}
     .sp-only{display: block;}

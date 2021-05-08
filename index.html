@@ -4,310 +4,370 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>inoweather</title>
     <link rel="stylesheet" href="./css/reset.css">
     <link rel="stylesheet" href="./css/flame.css">
+    <link rel="stylesheet" href="./css/layout.css">
     <link rel="stylesheet" href="./css/index.css">
+    <link rel="shortcut icon" href="#" type="image/vnd.microsoft.icon" />
 </head>
 <body>
-    <div id="wrapper" class="hidden">
-        <div class="container flex justify-between wrap">
-            <div id="JP" class="card">
-                <div class="card-title title-font flex justify-between">
-                    <p>JAPAN</p>
-                    <div class="time"></div>
-                </div>
-                <div class="card-img">
-                    <img class="hidden show">
-                </div>
-                <div class="card-content" style="padding: 2%;">
-                    <div>
-                        <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
-                            <div>
-                                <div class="title-font" style="margin-bottom: 5px;">SHIBUYA</div>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind"></span>m/s</p>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity"></span>%</p>
-                                <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure"></span>Pa</p>
-                            </div>
-                            <div class="flex align-center flex justify-between" style="width: 140px;">
-                                <img class="hidden show" style="width:56px">
-                                <div class="text-right">
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp"></span>&#8451;</div>
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop"></span>%</div>
-                                </div>
-                            </div>
+    <div id="wrapper">
+        <header>
+            <div id="header" class="nav">
+                <h1 style="font-size: 36px;font-weight: bold;margin-right: 5%;">world news</h1>
+                <div class="nav-item nav-active" onclick="active(0)">weather</div>
+                <div class="nav-item" onclick="active(1)">news</div>
+                <div class="nav-item" onclick="active(2)">todo</div>
+                <div class="nav-item" onclick="active(3)">calendar</div>
+            </div>
+        </header>
+        <main>
+            <div id="main-wrapper" style="position: relative;">
+                <div id="main-container">
+                    <div id="side-bar">
+                        <div id="lists" style="padding:10px 0;overflow: hidden;">
+                            <div style="font-size:26px;font-weight:bold;padding:10px">News</div>
+                            <div id="list-items"></div>
                         </div>
-                        <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
+                    </div>
+                    <div id="lazy-frame">
+                        <img id="lazy-load" style="width:50px" class="lazy-hidden lazy-show">
+                    </div>
+                    <div id="page">
+                        <div id="pages" class="hidden show" style="padding-top: 60px">
+                            <div>
+                                <div id="todo">
+                                    <div class="flex align-center hidden show todo">
+                                        <div class="list" style="font-size:20px">aaa</div>
+                                        <div class="flex">
+                                            <button class="edit-todo" onclick="editTodo()">編集</button>
+                                            <button class="delete-todo" onclick="deleteTodo()">削除</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input id="todoInput" type="text" oninput="changeText()">
+                                <button id="add-todo" onclick="addTodo()">追加</button>
+                                <button id="delete-all-todo" onclick="deleteAllTodo()">全て削除</button>
+                                <button id="update-todo" class="none" onclick="updateTodo()">更新</button>
+                                <button id="cancel-todo" class="none" onclick="cancelTodo()">戻る</button>
                             </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
+                            <div id="news-container" class="container flex justify-between wrap hidden none" style="padding-top:20px">
                             </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
+                            <div id="todo-container" class="hidden none">
+                                todo
+                            </div>
+                            <div id="calendar-container" class="hidden none">
+                                calendar
+                            </div>
+                            <div id="card-container" class="container flex justify-between wrap hidden show">
+                                <div id="JP" class="card">
+                                    <div class="card-title title-font flex justify-between">
+                                        <p>JAPAN</p>
+                                        <div class="time"></div>
+                                    </div>
+                                    <div class="card-img">
+                                        <img class="hidden">
+                                    </div>
+                                    <div class="card-content" style="padding: 2%;">
+                                        <div>
+                                            <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
+                                                <div>
+                                                    <div class="title-font" style="margin-bottom: 5px;">SHIBUYA</div>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind">--</span>m/s</p>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity">--</span>%</p>
+                                                    <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure">--</span>Pa</p>
+                                                </div>
+                                                <div class="flex align-center flex justify-between" style="width: 140px;">
+                                                    <img src="./img/lazy3.gif" class="hidden show" style="width:56px">
+                                                    <div class="text-right">
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp">--</span>&#8451;</div>
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop">--</span>%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="CN" class="card">
+                                    <div class="card-title title-font flex justify-between">
+                                        <p>CHINA</p>
+                                        <div class="time"></div>
+                                    </div>
+                                    <div class="card-img">
+                                        <img class="hidden">
+                                    </div>
+                                    <div class="card-content" style="padding: 2%;">
+                                        <div>
+                                            <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
+                                                <div>
+                                                    <div class="title-font" style="margin-bottom: 5px;">SHENZHEN</div>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind">--</span>m/s</p>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity">--</span>%</p>
+                                                    <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure">--</span>Pa</p>
+                                                </div>
+                                                <div class="flex align-center flex justify-between" style="width: 140px;">
+                                                    <img src="./img/lazy3.gif" class="hidden show" style="width:56px">
+                                                    <div class="text-right">
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp">--</span>&#8451;</div>
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop">--</span>%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="IN" class="card">
+                                    <div class="card-title title-font flex justify-between">
+                                        <p>INDIA</p>
+                                        <div class="time"></div>
+                                    </div>
+                                    <div class="card-img">
+                                        <img class="hidden">
+                                    </div>
+                                    <div class="card-content" style="padding: 2%;">
+                                        <div>
+                                            <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
+                                                <div>
+                                                    <div class="title-font" style="margin-bottom: 5px;">BANGALORE</div>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind">--</span>m/s</p>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity">--</span>%</p>
+                                                    <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure">--</span>Pa</p>
+                                                </div>
+                                                <div class="flex align-center flex justify-between" style="width: 140px;">
+                                                    <img src="./img/lazy3.gif" class="hidden show" style="width:56px">
+                                                    <div class="text-right">
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp">--</span>&#8451;</div>
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop">--</span>%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="IL" class="card">
+                                    <div class="card-title title-font flex justify-between">
+                                        <p>ISRAEL</p>
+                                        <div class="time"></div>
+                                    </div>
+                                    <div class="card-img">
+                                        <img class="hidden">
+                                    </div>
+                                    <div class="card-content" style="padding: 2%;">
+                                        <div>
+                                            <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
+                                                <div>
+                                                    <div class="title-font" style="margin-bottom: 5px;">TELAVIV</div>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind">--</span>m/s</p>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity">--</span>%</p>
+                                                    <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure">--</span>Pa</p>
+                                                </div>
+                                                <div class="flex align-center flex justify-between" style="width: 140px;">
+                                                    <img src="./img/lazy3.gif" class="hidden show" style="width:56px">
+                                                    <div class="text-right">
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp">--</span>&#8451;</div>
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop">--</span>%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="DE" class="card">
+                                    <div class="card-title title-font flex justify-between">
+                                        <p>GERMANY</p>
+                                        <div class="time"></div>
+                                    </div>
+                                    <div class="card-img">
+                                        <img class="hidden">
+                                    </div>
+                                    <div class="card-content" style="padding: 2%;">
+                                        <div>
+                                            <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
+                                                <div>
+                                                    <div class="title-font" style="margin-bottom: 5px;">BERLIN</div>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind">--</span>m/s</p>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity">--</span>%</p>
+                                                    <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure">--</span>Pa</p>
+                                                </div>
+                                                <div class="flex align-center flex justify-between" style="width: 140px;">
+                                                    <img src="./img/lazy3.gif" class="hidden show" style="width:56px">
+                                                    <div class="text-right">
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp">--</span>&#8451;</div>
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop">--</span>%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="SV" class="card">
+                                    <div class="card-title title-font flex justify-between">
+                                        <p>BRAZIL</p>
+                                        <div class="time"></div>
+                                    </div>
+                                    <div class="card-img">
+                                        <img class="hidden">
+                                    </div>
+                                    <div class="card-content" style="padding: 2%;">
+                                        <div>
+                                            <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
+                                                <div>
+                                                    <div class="title-font" style="margin-bottom: 5px;">SALVADOR</div>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind">--</span>m/s</p>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity">--</span>%</p>
+                                                    <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure">--</span>Pa</p>
+                                                </div>
+                                                <div class="flex align-center flex justify-between" style="width: 140px;">
+                                                    <img src="./img/lazy3.gif" class="hidden show" style="width:56px">
+                                                    <div class="text-right">
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp">--</span>&#8451;</div>
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop">--</span>%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="US" class="card">
+                                    <div class="card-title title-font flex justify-between">
+                                        <p>US</p>
+                                        <div class="time"></div>
+                                    </div>
+                                    <div class="card-img">
+                                        <img class="hidden">
+                                    </div>
+                                    <div class="card-content" style="padding: 2%;">
+                                        <div>
+                                            <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
+                                                <div>
+                                                    <div class="title-font" style="margin-bottom: 5px;">CALIFORNIA</div>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind">--</span>m/s</p>
+                                                    <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity">--</span>%</p>
+                                                    <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure">--</span>Pa</p>
+                                                </div>
+                                                <div class="flex align-center flex justify-between" style="width: 140px;">
+                                                    <img src="./img/lazy3.gif" class="hidden show" style="width:56px">
+                                                    <div class="text-right">
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp">--</span>&#8451;</div>
+                                                        <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop">--</span>%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                                <div class="sub">
+                                                    <img src="./img/lazy3.gif" style="width:40px;margin-bottom:5px">
+                                                    <div class="text-center sub-font"><span class="time">--時</span><span class="pop">--</span>%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="CN" class="card">
-                <div class="card-title title-font flex justify-between">
-                    <p>CHINA</p>
-                    <div class="time"></div>
-                </div>
-                <div class="card-img">
-                    <img class="hidden show">
-                </div>
-                <div class="card-content" style="padding: 2%;">
-                    <div>
-                        <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
-                            <div>
-                                <div class="title-font" style="margin-bottom: 5px;">SHENZHEN</div>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind"></span>m/s</p>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity"></span>%</p>
-                                <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure"></span>Pa</p>
-                            </div>
-                            <div class="flex align-center flex justify-between" style="width: 140px;">
-                                <img class="hidden show" style="width:56px">
-                                <div class="text-right">
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp"></span>&#8451;</div>
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop"></span>%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </main>
+        <footer>
+            <div id="footer" class="nav">
+                <div style="font-size: 36px;font-weight: bold;margin-right: 5%;">Today's schedule</div>
+                <div id="schedule" style="display: flex;"></div>
             </div>
-            <div id="IN" class="card">
-                <div class="card-title title-font flex justify-between">
-                    <p>INDIA</p>
-                    <div class="time"></div>
-                </div>
-                <div class="card-img">
-                    <img class="hidden show">
-                </div>
-                <div class="card-content" style="padding: 2%;">
-                    <div>
-                        <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
-                            <div>
-                                <div class="title-font" style="margin-bottom: 5px;">BANGALORE</div>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind"></span>m/s</p>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity"></span>%</p>
-                                <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure"></span>Pa</p>
-                            </div>
-                            <div class="flex align-center flex justify-between" style="width: 140px;">
-                                <img class="hidden show" style="width:56px">
-                                <div class="text-right">
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp"></span>&#8451;</div>
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop"></span>%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="IL" class="card">
-                <div class="card-title title-font flex justify-between">
-                    <p>ISRAEL</p>
-                    <div class="time"></div>
-                </div>
-                <div class="card-img">
-                    <img class="hidden show">
-                </div>
-                <div class="card-content" style="padding: 2%;">
-                    <div>
-                        <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
-                            <div>
-                                <div class="title-font" style="margin-bottom: 5px;">TELAVIV</div>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind"></span>m/s</p>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity"></span>%</p>
-                                <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure"></span>Pa</p>
-                            </div>
-                            <div class="flex align-center flex justify-between" style="width: 140px;">
-                                <img class="hidden show" style="width:56px">
-                                <div class="text-right">
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp"></span>&#8451;</div>
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop"></span>%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="DE" class="card">
-                <div class="card-title title-font flex justify-between">
-                    <p>GERMANY</p>
-                    <div class="time"></div>
-                </div>
-                <div class="card-img">
-                    <img class="hidden show">
-                </div>
-                <div class="card-content" style="padding: 2%;">
-                    <div>
-                        <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
-                            <div>
-                                <div class="title-font" style="margin-bottom: 5px;">BERLIN</div>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind"></span>m/s</p>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity"></span>%</p>
-                                <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure"></span>Pa</p>
-                            </div>
-                            <div class="flex align-center flex justify-between" style="width: 140px;">
-                                <img class="hidden show" style="width:56px">
-                                <div class="text-right">
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp"></span>&#8451;</div>
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop"></span>%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="SV" class="card">
-                <div class="card-title title-font flex justify-between">
-                    <p>BRAZIL</p>
-                    <div class="time"></div>
-                </div>
-                <div class="card-img">
-                    <img class="hidden show">
-                </div>
-                <div class="card-content" style="padding: 2%;">
-                    <div>
-                        <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
-                            <div>
-                                <div class="title-font" style="margin-bottom: 5px;">SALVADOR</div>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind"></span>m/s</p>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity"></span>%</p>
-                                <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure"></span>Pa</p>
-                            </div>
-                            <div class="flex align-center flex justify-between" style="width: 140px;">
-                                <img class="hidden show" style="width:56px">
-                                <div class="text-right">
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp"></span>&#8451;</div>
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop"></span>%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="US" class="card">
-                <div class="card-title title-font flex justify-between">
-                    <p>US</p>
-                    <div class="time"></div>
-                </div>
-                <div class="card-img">
-                    <img class="hidden show">
-                </div>
-                <div class="card-content" style="padding: 2%;">
-                    <div>
-                        <div class="flex align-item-center justify-between main-weather" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;">
-                            <div>
-                                <div class="title-font" style="margin-bottom: 5px;">CALIFORNIA</div>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">speed:<span class="wind"></span>m/s</p>
-                                <p style="font-size:12px;font-weight: bold;margin-bottom: 2px;">humidity:<span class="humidity"></span>%</p>
-                                <p style="font-size:12px;font-weight: bold;">pressure:<span class="pressure"></span>Pa</p>
-                            </div>
-                            <div class="flex align-center flex justify-between" style="width: 140px;">
-                                <img class="hidden show" style="width:56px">
-                                <div class="text-right">
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="temp"></span>&#8451;</div>
-                                    <div style="font-size: 23px;font-weight: bold;padding: 3px 0;"><span class="pop"></span>%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between sub-weathers" style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;">
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                            <div class="sub">
-                                <img style="width:40px;margin-bottom:5px">
-                                <div class="text-center sub-font"><span class="time"></span><span class="pop"></span>%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script src="./index.js" defer></script>
+        </footer>
     </div>
+    <script src="./index.js"></script>
 </body>
 </html>

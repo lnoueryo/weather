@@ -1,13 +1,51 @@
+
 .hidden{
     visibility: hidden;
     opacity:0;
-    transition: all 2s,transform .5s;
+    transition: all .5s,transform .5s;
 }
 
 .show{
     visibility: visible;
     opacity:1;
-    transition: all 2s,transform .5s;
+    transition: all .5s,transform .5s;
+}
+
+.lazy-hidden{
+    visibility: hidden;
+    opacity:0;
+    transition: all 1.5s,transform .5s;
+}
+
+.lazy-show{
+    visibility: visible;
+    opacity:1;
+    transition: all 1.5s,transform .5s;
+}
+
+.nav{
+    padding: 10px 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.nav-item{
+    transition: all .5s;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 3vw;
+    cursor: pointer;
+}
+
+.nav-item:hover{
+    transition: all .5s;
+    color:rgba(0, 0, 0, 0.156);
+}
+
+.nav-active{
+    color:rgba(0, 0, 0, 0.156);
+    cursor: initial;
 }
 
 .container{
@@ -24,12 +62,21 @@
     border-radius: 2px;
     margin-bottom: 40px;
 }
+.card-content{
+    background-color: white;
+
+}
 
 .card-img{
     /* background-image: url(../img/japan.jpg);
     background-position: center; */
     height: 170px;
     overflow: hidden;
+    background-color:white;
+    background-image: url("../img/lazy2.gif");
+    background-size: 20%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
 }
 .card-img img{
     object-fit: cover;
@@ -39,10 +86,59 @@
 .card-img img:hover{
     transform: scale(1.4);
 }
+
+#news-container .card{
+    width: 100%;
+    max-width:450px;
+    overflow: hidden;
+    box-shadow: 1px 1px 2px gray;
+    background-color: white;
+    border-radius: 2px;
+    margin-bottom: 40px;
+}
+
+#news-container .card-title{
+    padding: 10px;
+    background-color: #443535;
+    color:rgb(231, 231, 231);
+    min-height: 55.5px;
+    display: flex;
+    align-items: center;
+}
+
+.news-card-img{
+    /* background-image: url(../img/japan.jpg);
+    background-position: center; */
+    width: 450px;
+    height: 170px;
+    overflow: hidden;
+    background-color:white;
+    background-size: 20%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+.news-card-img img{
+    object-fit: cover;
+    height: 170px;
+    transform: scale(1.0);
+}
+.news-card-img img:hover{
+    transform: scale(1.4);
+}
+
 .card-title{
     padding: 10px;
     background-color: #443535;
     color:rgb(231, 231, 231);
+}
+
+.card-title{
+    padding: 10px;
+    background-color: #443535;
+    color:rgb(231, 231, 231);
+    min-height: 55.5px;
+    display: flex;
+    align-items: center;
 }
 
 .title-font{
@@ -57,4 +153,22 @@
 .sub-font{
     font-size: 13px;
     font-weight:bold;
+}
+
+.list-item {
+    opacity:1;
+    transition: all .5s;
+}
+
+.list-item:hover {
+    opacity:0.4;
+    transition: all .5s;
+}
+
+.list-item .title{
+    text-decoration: none;
+}
+
+.active-todo{
+    background-color: burlywood;
 }

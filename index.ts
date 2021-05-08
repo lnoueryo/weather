@@ -1,10 +1,25 @@
 const baseurl1: string = 'https://api.openweathermap.org/data/2.5/'
 const baseurl2: string = 'https://api.openweathermap.org/geo/1.0/'
+const newsBaseurl = 'https://newsapi.org/v2/'
 const apiKey: string = '9e69adbbcef4bf2f73c4db5a809e4de8'
 const imgPath = './img/'
-const wrapper = document.getElementById("wrapper") as HTMLDivElement;
+// const searchWords = ['japan'];
+const searchWords = ['japan', 'china', 'india', 'israel', 'germany', 'brazil', 'us'];
+const countryCode = ["JP", "CN", "IN", "IL", "DE", "SV", "US"]
+const pages = document.getElementById("pages") as HTMLDivElement;
+let newsArticles: newArticle[] = [];
 let countries: countryInfo[];
 let now: number;
+let cardsHTML: string;
+let newsHTML: string;
+let todoHTML: string;
+let calendarHTML: string;
+let listHTML: string;
+let cardContainer;
+let newsContainer;
+let todoContainer;
+let calendarContainer;
+let pagesIdArray: any = [];
 interface countryInfo {"code": string,"name": countryName,"en_name": countryName}
 interface countryName {"full": string, "short": string}
 interface today { city: cityInfo, cot: number, cod: number, list: list[]}
@@ -12,27 +27,26 @@ interface temperature {feels_like: number,grnd_level: number,humidity: number,pr
 interface weatherInfo{id: number, main: string, description: string, icon: string}
 interface cityInfo {coord: {lat: number, lon: number},population: number, sunrise: number, sunset: number, timezone: number}
 interface list {dt: number, dt_txt: string, main: temperature, weather: weatherInfo[], wind: {speed: number, deg: number, gust: number}}
+interface article {"source": {"id": string,"name": string}, "author": string, "title": string, "description": string, "link": string, "urlToImage": string, "publishedAt": string, "content": string}
+interface event {bubbles: boolean, cancelBubble: boolean,cancelable: boolean, composed: boolean, currentTarget: HTMLElement,defaultPrevented: boolean, eventPhase: number, isTrusted: boolean, path: HTMLElement[],returnValue: boolean,srcElement: HTMLElement,target: HTMLElement,timeStamp: number,type: "load"}
+interface path extends Event {
+    path: HTMLElement[]
+  }
+
+interface newArticle{author: string,authors: string[],clean_url: string,country: string,is_opinion: boolean,language: string,link: string,media: string,published_date: string,published_date_precision: string,rank: number,rights: string,summary: string,title: string,topic: string,twitter_account: string,_id: string,_score: number}
+
+
 
 class Weather {
     public cityName: string
-    public cityInfo
+    public countryCode
     public timezone
     public card: HTMLDivElement
-    constructor(cityName: string) {
+    constructor(cityName: string, timezone: number, countryCode: string) {
         this.cityName = cityName;
-        this.cityInfo = this.getCityInfo()
-        this.timezone = (this.today()).timezone
-        this.card = document.getElementById(this.cityInfo.country) as HTMLDivElement;
-    };
-    today(){
-        const today: string = baseurl1 + `weather?q=${this.cityName}&appid=${apiKey}`
-        const httpRequest = new XMLHttpRequest();
-        httpRequest.open("GET", today, false);
-        httpRequest.send();
-        if (httpRequest.status === 200) {
-            return JSON.parse(httpRequest.responseText);
-        }
-        return httpRequest.statusText
+        this.countryCode = countryCode
+        this.timezone = timezone
+        this.card = document.getElementById(this.countryCode) as HTMLDivElement;
     };
     fiveDaysPerThreeHours(){
         const httpRequest = new XMLHttpRequest();
@@ -92,7 +106,6 @@ class Weather {
         time1.textContent = `${(new Date((subWeathers[0].dt-6*60*60)*1000)).getHours()}時 `
         time2.textContent = `${(new Date((subWeathers[1].dt-6*60*60)*1000)).getHours()}時 `
         time3.textContent = `${(new Date((subWeathers[2].dt-6*60*60)*1000)).getHours()}時 `
-        console.log(subWeathers)
     }
     weatherImage(description: string){
         if(description == 'clearsky' || description == 'scatteredclouds' || description == 'fewclouds'){
@@ -110,31 +123,17 @@ class Weather {
             return `${imgPath}snow.png`
         }
     }
-    getCityInfo(){
-        const httpRequest = new XMLHttpRequest();
-        const cityInfo: string = baseurl2 + `direct?q=${this.cityName}&limit=1&appid=${apiKey}`;
-        httpRequest.open("GET", cityInfo, false);
-        httpRequest.send();
-        if (httpRequest.status === 200) {
-           return JSON.parse(httpRequest.responseText)[0];
-        }
-    };
     getCountryName(){
         const countryInfo = countries.find((country: countryInfo)=>{
-            return country.code == this.cityInfo.country;
+            return country.code == this.countryCode;
         }) as countryInfo
         return countryInfo.name.full;
     };
     getTime(){
-        const httpRequest = new XMLHttpRequest();
-        httpRequest.open('HEAD', window.location.href, false);
-        httpRequest.send();
-        if (httpRequest.status === 200) {
-            const GMT = new Date(httpRequest.getResponseHeader('Date') as string)
-            const UTC = GMT.getTime() - 9*60*60*1000
-            const time = new Date(UTC + this.timezone*1000);
-            return time;
-        }
+        const GMT = new Date()
+        const UTC = GMT.getTime() - 9*60*60*1000
+        const time = new Date(UTC + this.timezone*1000);
+        return time;
     };
     changeTimeFormat(): void{
         const element = this.card.getElementsByClassName("time")[0] as HTMLDivElement;
@@ -168,33 +167,37 @@ class Weather {
         const that = this;
         setTimeout(function(){
             that.changeTimeFormat()
-        },250)
+        },500)
+        if(minutes+seconds == '0000'){
+            this.image()
+            this.mainWeather()
+            this.subWeathers()
+        }
     };
     getCharacterLength (str: string) {
         return [...str].length;
     };
     image(){
-        const countryCode = this.cityInfo.country;
+        const countryCode = this.countryCode;
         const img = this.card.getElementsByTagName('img')[0];
         const condition = this.getTime()?.getHours() as number <=18 && this.getTime()?.getHours() as number>6;
         if (condition) {
-            img.src = `${imgPath}${countryCode}.jpg`
+            img.srcset = `${imgPath}${countryCode}.jpg`
         } else {
-            img.src = `${imgPath}${countryCode}2.jpg`
+            img.srcset = `${imgPath}${countryCode}2.jpg`
         }
     };
 
 }
 
-function main(){
-
-    const tokyo = new Weather('tokyo');
-    const shenZhen = new Weather('shenzhen')
-    const bangalore = new Weather('bangalore')
-    const telAviv = new Weather('tel aviv')
-    const berlin = new Weather('berlin')
-    const salvador = new Weather('salvador')
-    const california = new Weather('california')
+function ready(){
+    const tokyo = new Weather('tokyo', 32400, "JP");
+    const shenZhen = new Weather('shenzhen', 28800, "CN")
+    const bangalore = new Weather('bangalore', 19800, "IN")
+    const telAviv = new Weather('tel aviv', 10800, "IL")
+    const berlin = new Weather('berlin', 7200, "DE")
+    const salvador = new Weather('salvador', -21600, "SV")
+    const california = new Weather('california', -14400, "US")
     tokyo.changeTimeFormat()
     tokyo.image()
     tokyo.mainWeather()
@@ -233,18 +236,93 @@ function main(){
     california.subWeathers()
     const UTC = now - 9*60*60*1000
     const time = new Date(UTC + california.timezone*1000);
-    console.log(new Date(UTC))
-    console.log(-14400/60/60)
-    console.log(california.today())
-    console.log(salvador.today())
-    ready()
-    // console.log(((tokyo.fiveDaysPerThreeHours()).list[0]).pop)
-    // console.log(new Date('2021-05-04 15:00:00'))
+    // pages.classList.add("show")
 }
 
+function getListHTML(){
+    const httpRequest = new XMLHttpRequest();
+    httpRequest.open("GET", './components/list.html', false);
+    httpRequest.send();
+    listHTML = httpRequest.responseText;
+}
+
+// function getCards(){
+//     const httpRequest = new XMLHttpRequest();
+//     httpRequest.open("GET", './components/cards.html', false);
+//     httpRequest.send();
+//     cardsHTML = httpRequest.responseText;
+//     pages.innerHTML = cardsHTML;
+//     cardContainer = document.getElementById("card-container") as HTMLDivElement;
+//     pagesArray.push(cardContainer)
+// }
+
+// function getNewsHTML(){
+//     const httpRequest = new XMLHttpRequest();
+//     httpRequest.open("GET", './components/news.html', true);
+//     httpRequest.send();
+//     newsHTML = httpRequest.responseText;
+//     pages.innerHTML = newsHTML;
+//     newsContainer = document.getElementById("news-container") as HTMLDivElement;
+//     pagesArray.push(newsContainer)
+// }
+
+// function getTodoHTML(){
+//     const httpRequest = new XMLHttpRequest();
+//     httpRequest.open("GET", './components/todo.html', true);
+//     httpRequest.send();
+//     todoHTML = httpRequest.responseText;
+//     pages.innerHTML = todoHTML;
+//     todoContainer = document.getElementById("todo-container") as HTMLDivElement;
+//     pagesArray.push(todoContainer)
+// }
+
+// function getCalendarHTML(){
+//     const httpRequest = new XMLHttpRequest();
+//     httpRequest.open("GET", './components/calendar.html', true);
+//     httpRequest.send();
+//     calendarHTML = httpRequest.responseText;
+//     pages.innerHTML = calendarHTML;
+//     calendarContainer = document.getElementById("calendar-container") as HTMLDivElement;
+//     pagesArray.push(calendarContainer)
+// }
+
+function getNews(searchWord: string){
+    const today = new Date();
+    const year = today.getFullYear();
+    let month: string|number = today.getMonth()+1
+    if (month==13) {
+        month -=12;
+    }
+    month = String(month)
+    if (Number(month)<10) {
+        month = '0' + month
+    }
+    let day = String(today.getDate()-1);
+    if (Number(day)<10) {
+        day = '0' + day
+    }
+    const data = null;
+    const xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === this.DONE) {
+            const response = JSON.parse(this.responseText);
+            for (let i = 0; i < response.articles.length; i++) {
+                newsArticles.push(response.articles[i])
+                createList(response.articles[i])
+            }
+            makeNewsCards()
+        }
+    });
+    xhr.open("GET", `https://free-news.p.rapidapi.com/v1/search?lang=en&page_size=24&q=${searchWord}`);
+    // xhr.open("GET", `https://free-news.p.rapidapi.com/v1/search?q=${searchWord}&lang=en&page_size=24&topic=world`);
+    xhr.setRequestHeader("x-rapidapi-key", "656a05a445mshe4e4050abeb5ba5p11c11djsn78c4cfab23c5");
+    xhr.setRequestHeader("x-rapidapi-host", "free-news.p.rapidapi.com");
+    xhr.send(data);
+}
 async function getJSON() {
     const req = new XMLHttpRequest();		  // XMLHttpRequest オブジェクトを生成する
-    await req.open("GET", "./country.json", false); // HTTPメソッドとアクセスするサーバーの　URL　を指定
+    await req.open("GET", "./components/country.json", false); // HTTPメソッドとアクセスするサーバーの　URL　を指定
     await req.send(null);					    // 実際にサーバーへリクエストを送信
     // req.onreadystatechange = function() {		  // XMLHttpRequest オブジェクトの状態が変化した際に呼び出されるイベントハンドラ
     // };
@@ -254,36 +332,303 @@ async function getJSON() {
     return req.statusText;
 }
 
-function getServerTime() {
-    const req = new XMLHttpRequest();
-    req.open('HEAD', window.location.href, false);
-    req.send();
-    if (req.readyState === 4) {
-        now = (new Date(req.getResponseHeader('Date') as string)).getTime()
-        setTimeout(function(){
-            getServerTime()
-        },500)
+function makeNewsCards(){
+    const html = `                                <div id="" class="card">
+    <div class="card-title title-font flex justify-between">
+        <p></p>
+        <div class="time"></div>
+    </div>
+    <div class="news-card-img">
+        <img class="hidden lazy-show">
+    </div>
+    <div class="card-content" style="padding: 2%;">
+        <div style="background-color:rgb(253, 253, 253);border-radius:5px;padding: 7px 15px;margin-bottom: 5px;display:flex;min-height: 165px;">
+            <div>
+                <div style="flex justify-between">
+                    <div class="title-font" style="margin-bottom: 5px;"><span class="date"></span></div>
+                    <div class="title-font" style="margin-bottom: 5px;">author: <span class="author">none</span></div>
+                </div>
+                <div>
+                    <p style="font-size:15px;line-height: normal;"></p>
+                </div>
+            </div>
+        </div>
+    </div>`;
+    for (let i = 0; i < newsArticles.length; i++) {
+        const newsContainer = document.getElementById("news-container") as HTMLDivElement
+        const newDiv = document.createElement("div")
+        newDiv.insertAdjacentHTML('afterbegin', html);
+        newDiv.classList.add("flex")
+        //main-image
+        const cardImg = newDiv.getElementsByClassName("news-card-img");
+        const img = cardImg[0].getElementsByTagName("img");
+        img[0].src = newsArticles[i].media
+        if(newsArticles[i].media==null){
+            img[0].src = "./img/news.jpg"
+        }
+        //title
+        const cardTitle = newDiv.getElementsByClassName("card-title");
+        const p = cardTitle[0].getElementsByTagName("p");
+        p[0].textContent = newsArticles[i].title
+
+        //date
+        const cardContent = newDiv.getElementsByClassName("card-content");
+        const date = cardContent[0].getElementsByClassName("date");
+        date[0].textContent = newsArticles[i].published_date
+
+        //author
+        const author = cardContent[0].getElementsByClassName("author");
+        if (newsArticles[i].author) {
+            author[0].textContent = newsArticles[i].author
+        }
+
+        //author
+        let summary = newsArticles[i].summary;
+        const p2 = cardContent[0].getElementsByTagName("p");
+        if (summary && summary.length>=291) {
+            summary = newsArticles[i].summary.slice(0, 290) + '...'
+        }
+        p2[0].textContent = summary
+        newsContainer.appendChild(newDiv)
+        // var element = new Image();
+        // element.src = newsArticles[i].media ;
+        // element.onload = function () {
+        //     setTimeout(function(){
+        //         const size = {
+        //             width: element.width,
+        //             height: element.naturalHeight,
+        //         };
+        //         console.log(size);
+        //     },500)
+        // }
+        // URL.revokeObjectURL(element.src);
     }
+    console.log(newsArticles)
 }
-function ready(): void{
-    wrapper.classList.add('show')
+
+function createList(article: article){
+    let newDiv: HTMLDivElement = document.createElement("div")//div作成
+    const listItems = document.getElementById("list-items") as HTMLDivElement
+    newDiv.innerHTML = listHTML;//新しく作ったdiv内にコンポーネントを入れる。(カードが完成)
+    const title = newDiv.getElementsByClassName("title")[0] as HTMLAnchorElement
+    title.textContent = article.title
+    title.href = article.link
+    listItems.appendChild(newDiv);//カードコンテナに入れる
 }
-getServerTime();
+
+function getServerTime() {
+    now = (new Date()).getTime()
+    setTimeout(function(){
+        getServerTime()
+    },500)
+}
 
 const promise = getJSON()
 promise.then((res)=>{
     countries = JSON.parse(res)
-    main()
+    ready()
 })
 
-// setTimeout(function(){
-//     const card = document.getElementById("JP") as HTMLDivElement;
-//     const imgFrame = card.getElementsByClassName("card-img")[0] as HTMLDivElement;
-//     const cardContent = card.getElementsByClassName("card-content")[0] as HTMLDivElement;
-//     const img = imgFrame.getElementsByTagName('img')[0]
-//     const mainWeather = cardContent.getElementsByTagName('img')[0]
-//     mainWeather.src = `${imgPath}sunny.png`
-//     console.log(mainWeather)
-//     img.classList.remove('show')
-//     setTimeout(function(){img.src = './img/JP1.jpg'; img.classList.add('show')},1600)
-// }, 4000)
+function active(index: number){
+    const header = document.getElementById("header") as HTMLDivElement;
+    const navItems = header.getElementsByClassName("nav-item") as HTMLCollectionOf<HTMLElement>;
+    const classes = navItems[index].classList.value.split(' ');
+    const isActive = classes.some((classList: string): boolean =>{
+        return classList === 'nav-active';
+    })
+    if (!isActive) {
+        for (let i = 0; i < navItems.length; i++) {
+            navItems[i].classList.remove('nav-active');
+        }
+        navItems[index].classList.add('nav-active')
+        activePage(index)
+    }
+}
+
+function activePage(index: number){
+    for (let i = 0; i < pagesIdArray.length; i++) {
+        (pagesIdArray[i] as any).classList.remove('show');
+    }
+    setTimeout(function(){
+        for (let i = 0; i < pagesIdArray.length; i++) {
+            (pagesIdArray[i] as any).classList.add('none');
+        }
+        pagesIdArray[index].classList.remove("none")
+        setTimeout(function(){pagesIdArray[index].classList.add('show')},100)
+
+    },1500)
+}
+
+function getSchedule(){
+    let mySchedule = [];
+    if(mySchedule.length==0){
+        const newDiv = document.createElement("div") as HTMLDivElement;
+        newDiv.classList.add("nav-item")
+        newDiv.textContent = 'nothing　special　today'
+        const schedule = document.getElementById("schedule") as HTMLDivElement
+        schedule.appendChild(newDiv);
+    }
+}
+
+
+function pagesId(){
+    const cardContainer = document.getElementById("card-container")
+    const newsContainer = document.getElementById("news-container")
+    const todoContainer = document.getElementById("todo-container")
+    const calendarContainer = document.getElementById("calendar-container")
+    pagesIdArray.push(cardContainer)
+    pagesIdArray.push(newsContainer)
+    pagesIdArray.push(todoContainer)
+    pagesIdArray.push(calendarContainer)
+}
+function showImg(){
+    let event = window.event as path;
+    (event.path[0] ).classList.add("lazy-show")
+    setTimeout(function(){
+    },1000)
+}
+function lazyLoad(){
+    const img = document.getElementsByTagName("img") as HTMLCollectionOf<HTMLImageElement>
+    for (let i = 0; i < img.length; i++) {
+        img[i].addEventListener("load", (e)=>{
+            showImg()
+        })
+    }
+}
+
+
+
+
+
+const todoInput = document.getElementById("todoInput") as HTMLInputElement;
+const todo = document.getElementById("todo") as HTMLInputElement;
+const addTodoEl = document.getElementById("add-todo") as HTMLInputElement;
+const deleteAllTodoEl = document.getElementById("delete-all-todo") as HTMLInputElement;
+const updateTodoEl = document.getElementById("update-todo") as HTMLInputElement;
+const cancelTodoEl = document.getElementById("cancel-todo") as HTMLInputElement;
+let keepTodo: string;
+let editMode = false;
+let selectedList :HTMLDivElement;
+let editTodoEl: HTMLCollectionOf<HTMLButtonElement>;
+let deleteTodoEl: HTMLCollectionOf<HTMLButtonElement>;
+
+function addTodo(){
+    if (todoInput.value) {
+        const newDiv = document.createElement("div")
+        const listHTML = `<div class="flex align-center hidden show todo">
+        <div class="list" style="font-size:20px"></div>
+        <div class="flex">
+            <button class="edit-todo" onclick="editTodo()">編集</button>
+            <button class="delete-todo" onclick="deleteTodo()">削除</button>
+        </div>
+    </div>`
+        newDiv.insertAdjacentHTML('afterbegin', listHTML);
+        const list = newDiv.getElementsByClassName("list");
+        list[0].textContent = todoInput.value;
+        todo.appendChild(newDiv);
+        todoInput.value = ""
+    }
+}
+
+function deleteAllTodo(){
+        const allTodo = todo.getElementsByClassName("todo") as HTMLCollectionOf<HTMLElement>;
+        for (let i = allTodo.length-1; i >= 0; i--) {
+            allTodo[i].classList.remove("show")
+            setTimeout(function(){allTodo[i].remove();},500)
+        }
+}
+
+function deleteTodo(){
+    let event = window.event as path;
+    event.path[2].classList.remove("show");
+    setTimeout(function(){event.path[2].remove();},500)
+}
+
+function editTodo(){
+    editTodoEl = document.getElementsByClassName("edit-todo") as HTMLCollectionOf<HTMLButtonElement>;
+    deleteTodoEl = document.getElementsByClassName("delete-todo") as HTMLCollectionOf<HTMLButtonElement>;
+    editMode = true;
+    todoInput.value = ""
+    let event = window.event as path;
+    selectedList = event.path[2] as HTMLDivElement
+    selectedList.classList.add("active-todo");
+    const list = selectedList.getElementsByClassName("list")[0] as HTMLDivElement
+    keepTodo = list.textContent as string;
+    todoInput.value = list.textContent as string;
+    addTodoEl.classList.add("none")
+    deleteAllTodoEl.classList.add("none")
+    updateTodoEl.classList.remove("none")
+    cancelTodoEl.classList.remove("none")
+    for (let i = editTodoEl.length-1; i >= 0; i--) {
+        editTodoEl[i].classList.add("none")
+        deleteTodoEl[i].classList.add("none")
+    }
+}
+
+function updateTodo(){
+    editMode = false;
+    todoInput.value = ""
+    selectedList.classList.remove("active-todo");
+    addTodoEl.classList.remove("none")
+    deleteAllTodoEl.classList.remove("none")
+    updateTodoEl.classList.add("none")
+    cancelTodoEl.classList.add("none")
+    for (let i = 0; i < editTodoEl.length; i++) {
+        editTodoEl[i].classList.remove("none")
+        deleteTodoEl[i].classList.remove("none")
+    }
+}
+
+function cancelTodo(){
+    editMode = false;
+    todoInput.value = ""
+    selectedList.classList.remove("active-todo");
+    let event = window.event as path;
+    const list = selectedList.getElementsByClassName("list")[0] as HTMLDivElement
+    list.textContent = keepTodo;
+    addTodoEl.classList.remove("none")
+    deleteAllTodoEl.classList.remove("none")
+    updateTodoEl.classList.add("none")
+    cancelTodoEl.classList.add("none")
+    for (let i = 0; i < editTodoEl.length; i++) {
+        editTodoEl[i].classList.remove("none")
+        deleteTodoEl[i].classList.remove("none")
+    }
+}
+
+function changeText(){
+    if(editMode){
+        selectedList.getElementsByClassName("list")[0].textContent = todoInput.value
+    }
+}
+class Todo {
+    constructor(){}
+    createList(){
+        const newDiv = document.createElement("div")
+    }
+}
+
+
+
+function main(){
+    lazyLoad()
+    // getNewsHTML()
+    // getTodoHTML()
+    // getCalendarHTML()
+    getNews('technology')
+    // for (let i = 0; i < searchWords.length; i++) {
+    //     getNews(searchWords[i])
+    // }
+    getListHTML()
+    getServerTime();
+    // getCards()
+    getSchedule()
+    pagesId()
+}
+
+main()
+
+// const httpRequest = new XMLHttpRequest();
+// httpRequest.open("GET", 'https://lnoueryo98.sakura.ne.jp/blog/api/blog', false);
+// httpRequest.send();
+// console.log(JSON.parse(httpRequest.responseText))
