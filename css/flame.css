@@ -1,9 +1,9 @@
 /* ここはいじらない */
 
 .none{display: none!important;}
-.w-100{width: 100%}
-.w-50{width: 50%}
-.w-30{width: 30%}
+.w100{width: 100%}
+.w50{width: 50%}
+.w30{width: 30%}
 .text-white{color: white!important;}
 /* padding */
 .p-0{padding: 0;}

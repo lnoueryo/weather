@@ -19,7 +19,7 @@ const countryCode = ["JP", "CN", "IN", "IL", "DE", "SV", "US"];
 const pages = document.getElementById("pages");
 let newsArticles = [];
 let countries;
-let now;
+let now = (new Date()).getTime();
 let cardsHTML;
 let newsHTML;
 let todoHTML;
@@ -392,7 +392,6 @@ function makeNewsCards() {
         // }
         // URL.revokeObjectURL(element.src);
     }
-    console.log(newsArticles);
 }
 function createList(article) {
     let newDiv = document.createElement("div"); //div作成
@@ -403,12 +402,12 @@ function createList(article) {
     title.href = article.link;
     listItems.appendChild(newDiv); //カードコンテナに入れる
 }
-function getServerTime() {
-    now = (new Date()).getTime();
-    setTimeout(function () {
-        getServerTime();
-    }, 500);
-}
+// function getServerTime() {
+//     now = (new Date()).getTime()
+//     setTimeout(function(){
+//         getServerTime()
+//     },500)
+// }
 const promise = getJSON();
 promise.then((res) => {
     countries = JSON.parse(res);
@@ -575,6 +574,163 @@ class Todo {
         const newDiv = document.createElement("div");
     }
 }
+class Calendar {
+    constructor(...arg) {
+        if (arg.length > 0) {
+            this.selectedDate = new Date(arg[0]);
+        }
+        else {
+            this.selectedDate = new Date();
+        }
+        this.firstDayOfSelectedMonth = this.getFirstDay(this.selectedDate);
+        this.firstDayNum = this.firstDayOfSelectedMonth.getDay();
+        this.startDate = this.getStartDate(this.selectedDate);
+        this.firstDayOfNextMonth = this.getFirstDayOfNextMonth(this.selectedDate);
+        this.lastDayOfSelectedMonth = this.getLastDayOfSelectedMonth(this.selectedDate);
+        this.calendarList = this.thisMonthCalendarArray();
+    }
+    getLastDayOfSelectedMonth(date) {
+        const getFirstDayOfNextMonth = this.getFirstDayOfNextMonth(date);
+        getFirstDayOfNextMonth.setDate(0);
+        return getFirstDayOfNextMonth;
+    }
+    getFirstDayOfNextMonth(date) {
+        return this.getFirstDay(this.getNextMonth(date));
+    }
+    getNextMonth(date) {
+        const now = new Date();
+        const nextMonth = this.getMonth(date.getMonth());
+        now.setMonth(nextMonth);
+        return now;
+    }
+    getMonth(month) {
+        month += 1;
+        if (month >= 13) {
+            month -= 12;
+        }
+        return month;
+    }
+    getFirstDay(date) {
+        const year = date.getFullYear();
+        const month = this.getMonth(date.getMonth());
+        const firstDay = new Date(`${year}-${month}-01`);
+        return firstDay;
+    }
+    getStartDate(date) {
+        const year = date.getFullYear();
+        const month = this.getMonth(date.getMonth());
+        const firstDay = new Date(`${year}-${month}-01`);
+        const startDateOfLastMonth = new Date(firstDay.setDate(1 - this.firstDayNum));
+        return startDateOfLastMonth;
+    }
+    makeFirstArray() {
+        const selectedMonthCalendarList = [];
+        for (let i = 0; i < this.firstDayNum; i++) {
+            selectedMonthCalendarList.push(this.startDate.getDate() + i);
+        }
+        return selectedMonthCalendarList;
+    }
+    makeSecondArray() {
+        const lastDateOfThisMonth = this.lastDayOfSelectedMonth.getDate();
+        const selectedMonthCalendarList = [];
+        for (let i = 1; i < lastDateOfThisMonth + 1; i++) {
+            selectedMonthCalendarList.push(i);
+        }
+        return selectedMonthCalendarList;
+    }
+    makeThirdArray() {
+        const lastDateOfThisMonth = this.makeFirstArray().length + this.makeSecondArray().length;
+        let cell = 43;
+        if (lastDateOfThisMonth <= 35) {
+            cell = 36;
+        }
+        if (lastDateOfThisMonth <= 28) {
+            cell = 29;
+        }
+        const selectedMonthCalendarList = [];
+        for (let i = 1; i < cell - lastDateOfThisMonth; i++) {
+            selectedMonthCalendarList.push(i);
+        }
+        return selectedMonthCalendarList;
+    }
+    thisMonthCalendarArray() {
+        const array1 = this.makeFirstArray().concat(this.makeSecondArray());
+        const calendarList = array1.concat(this.makeThirdArray());
+        return calendarList;
+    }
+    divideArray() {
+        var arrList = [];
+        var idx = 0;
+        while (idx < this.calendarList.length) {
+            arrList.push(this.calendarList.splice(idx, idx + 7));
+        }
+        return arrList;
+    }
+    createCalendar(id) {
+        const calendar = document.getElementById(id);
+        calendar.style.maxWidth = '840px';
+        may.divideArray().forEach((week) => {
+            const weekDiv = document.createElement("div");
+            weekDiv.classList.add("flex");
+            weekDiv.classList.add("week");
+            week.forEach((day) => {
+                const dayDiv = document.createElement("div");
+                dayDiv.classList.add("w100");
+                const dayHTML = `<div class="day"></div>`;
+                dayDiv.insertAdjacentHTML('afterbegin', dayHTML);
+                const dayClass = dayDiv.getElementsByClassName("day")[0];
+                dayClass.textContent = String(day);
+                weekDiv.appendChild(dayDiv);
+            });
+            calendar.appendChild(weekDiv);
+        });
+    }
+}
+const may = new Calendar("2021-02-08");
+may.createCalendar("calendar");
+console.log(document.getElementsByClassName("day"));
+const calendar = document.getElementById("calendar");
+//今日を2021-05-08とする。
+const today = new Date();
+const thisYear = today.getFullYear();
+let thisMonth = today.getMonth() + 1;
+if (thisMonth == 13) {
+    thisMonth -= 12;
+}
+let nextYear = thisYear;
+let nextMonth = thisMonth + 1;
+if (nextMonth == 13) {
+    nextMonth -= 12;
+    nextYear += 1;
+}
+const thisDate = today.getDate();
+//2021-05-01を出す。
+const firstDay = new Date(`${thisYear}-${thisMonth}-01`);
+//次の月を出す
+const firstDayOfNextMonth = new Date(`${nextYear}-0${nextMonth}-01`);
+const lastDayOfThisMonth = new Date(firstDayOfNextMonth.setDate(0));
+const lastDateOfThisMonth = lastDayOfThisMonth.getDate();
+//カレンダー上で2021-05-01がどこから始まるかを算出。
+const firstDayNum = firstDay.getDay();
+const firstDate = firstDay.getDate();
+//カレンダーの一番最初が先月の何日から始まるかを算出。
+const startDayOfLastMonth = new Date(firstDay.setDate(1 - firstDayNum));
+const startDateOfLastMonth = startDayOfLastMonth.getDate();
+//カレンダーのスタートは2021-04-25
+const lastMonthCalendarList = [];
+for (let i = 0; i < firstDayNum; i++) {
+    lastMonthCalendarList.push(startDateOfLastMonth + i);
+}
+const thisMonthCalendarList = [];
+for (let i = 1; i < lastDateOfThisMonth + 1; i++) {
+    thisMonthCalendarList.push(i);
+}
+const nextMonthCalendarList = [];
+for (let i = 1; i < 43 - lastMonthCalendarList.length - thisMonthCalendarList.length; i++) {
+    nextMonthCalendarList.push(i);
+}
+const array1 = lastMonthCalendarList.concat(thisMonthCalendarList);
+const calendarList = array1.concat(nextMonthCalendarList);
 function main() {
     lazyLoad();
     // getNewsHTML()
@@ -585,7 +741,7 @@ function main() {
     //     getNews(searchWords[i])
     // }
     getListHTML();
-    getServerTime();
+    // getServerTime();
     // getCards()
     getSchedule();
     pagesId();

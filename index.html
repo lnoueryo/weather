@@ -16,10 +16,10 @@
         <header>
             <div id="header" class="nav">
                 <h1 style="font-size: 36px;font-weight: bold;margin-right: 5%;">world news</h1>
-                <div class="nav-item nav-active" onclick="active(0)">weather</div>
+                <div class="nav-item" onclick="active(0)">weather</div>
                 <div class="nav-item" onclick="active(1)">news</div>
                 <div class="nav-item" onclick="active(2)">todo</div>
-                <div class="nav-item" onclick="active(3)">calendar</div>
+                <div class="nav-item nav-active" onclick="active(3)">calendar</div>
             </div>
         </header>
         <main>
@@ -35,32 +35,22 @@
                         <img id="lazy-load" style="width:50px" class="lazy-hidden lazy-show">
                     </div>
                     <div id="page">
-                        <div id="pages" class="hidden show" style="padding-top: 60px">
-                            <div>
-                                <div id="todo">
-                                    <div class="flex align-center hidden show todo">
-                                        <div class="list" style="font-size:20px">aaa</div>
-                                        <div class="flex">
-                                            <button class="edit-todo" onclick="editTodo()">編集</button>
-                                            <button class="delete-todo" onclick="deleteTodo()">削除</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input id="todoInput" type="text" oninput="changeText()">
-                                <button id="add-todo" onclick="addTodo()">追加</button>
-                                <button id="delete-all-todo" onclick="deleteAllTodo()">全て削除</button>
-                                <button id="update-todo" class="none" onclick="updateTodo()">更新</button>
-                                <button id="cancel-todo" class="none" onclick="cancelTodo()">戻る</button>
-                            </div>
-                            <div id="news-container" class="container flex justify-between wrap hidden none" style="padding-top:20px">
-                            </div>
+                        <div id="pages" class="hidden show" style="padding-bottom: 60px">
+                            <div id="news-container" class="container flex justify-between wrap hidden none"></div>
                             <div id="todo-container" class="hidden none">
-                                todo
+                                <div>
+                                    <div id="todo"></div>
+                                    <input id="todoInput" type="text" oninput="changeText()">
+                                    <button id="add-todo" onclick="addTodo()">追加</button>
+                                    <button id="delete-all-todo" onclick="deleteAllTodo()">全て削除</button>
+                                    <button id="update-todo" class="none" onclick="updateTodo()">更新</button>
+                                    <button id="cancel-todo" class="none" onclick="cancelTodo()">戻る</button>
+                                </div>
                             </div>
-                            <div id="calendar-container" class="hidden none">
-                                calendar
+                            <div id="calendar-container" class="hidden show">
+                                <div id="calendar"></div>
                             </div>
-                            <div id="card-container" class="container flex justify-between wrap hidden show">
+                            <div id="card-container" class="container flex justify-between wrap hidden none">
                                 <div id="JP" class="card">
                                     <div class="card-title title-font flex justify-between">
                                         <p>JAPAN</p>
